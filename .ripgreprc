@@ -1,0 +1,27 @@
+#### ripgrep Config File #####
+
+# Using glob patterns to include/exclude files or folders
+# ! means exclude
+--glob=!Library/**
+--glob=!Music/**
+--glob=!**.pyc
+--glob=!**.DS_Store
+
+#search hidden files
+--hidden
+
+# Don't let ripgrep vomit really long lines to my terminal, and show a preview.
+--max-columns=150
+--max-columns-preview
+
+#  Limit the number of matching lines per file searched to NUM
+#--max-count=20
+
+# Ignore files larger than NUM in size. This does not apply to directories.
+--max-filesize=35M
+
+# Set the colors.
+--colors=line:none
+
+#smart case
+--smart-case

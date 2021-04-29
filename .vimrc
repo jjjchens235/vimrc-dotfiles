@@ -78,8 +78,10 @@ set encoding=utf-8
 set ffs=unix,dos,mac
 autocmd FileType * set tabstop=2|set shiftwidth=2|set noexpandtab
 autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
+autocmd BufRead,BufNewFile *.md set tabstop=4
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType crontab setlocal nowritebackup
+autocmd FileType sql set noai|set tabstop=2
 
 " No annoying sound on errors
 set belloff=all
@@ -160,7 +162,7 @@ nnoremap <leader>tn :botright term<CR><C-W>15_
 "Past terminal window mappings ...
 
 "Re-open existing terminal as split
-"nmap <leader>te :botright sb \!/bin/bash<Tab><CR><C-W>15_
+nmap <leader>te :botright sb \!/usr/local/bin/bash<Tab><CR><C-W>15_
 "term reset- make current buffer only one and then open existing terminal
 "nnoremap <leader>tr <C-w>o :botright sb \!/bin/bash<Tab><CR><C-W>15_<C-w>k
 "maybe deprecate tr if using tt instead
@@ -226,6 +228,8 @@ cnoremap <expr> <CR> getcmdtype() =~ '[/?]' ? '<CR>zz' : '<CR>'
 "update n and N to always go forward and backward after initial search
 nnoremap <expr> n (v:searchforward ? 'nzz' : 'Nzz')
 nnoremap <expr> N (v:searchforward ? 'Nzz' : 'nzz')
+vnoremap <expr> n (v:searchforward ? 'nzz' : 'Nzz')
+vnoremap <expr> N (v:searchforward ? 'Nzz' : 'nzz')
 nnoremap * *zz
 nnoremap # #zz
 
@@ -252,6 +256,13 @@ nnoremap <space> a<space><Esc>
 "when changing case, don't move the cursor
 nnoremap ~ ~h
 "nnoremap gm gM
+
+" spell check settings
+autocmd BufRead,BufNewFile *.md setlocal spell
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+" open up spell checker recommendations
+nnoremap <leader>sc z=
 
 " ------------------------- Editing Files ---------------------------------
 if has("win32unix") || has("win32")
@@ -436,7 +447,6 @@ function! BnSkipTermBack()
 endfunction
 
 
-
 "-------------------- abbrev --------------------------
 
 "create a vertical split from existing buffer
@@ -571,5 +581,25 @@ hi SpellBad term=reverse ctermbg=blue
 let g:syntastic_python_flake8_args='--ignore=E501,E225,E124,E93,E265,E261,E122,E121,E131'
 "move to next error using lnext
 nnoremap <silent> <leader>e :call WrapCommand('next', 'l')<CR>
+
+"--------------- sql formatter - NPM library ------------------------------
+" vim-plug not necessary for this, using externally downloaded lib
+"dependency: npm install sql-formatter
+"src: https://stackoverflow.com/a/60242117/8722091
+" Also tried, didnt like format:https://stackoverflow.com/a/8577782/8722091
+map <leader>sf :%! npx sql-formatter --lines-between-queries 2<CR>
+function! SqlFormatter()
+		%! npx sql-formatter --lines-between-queries 2
+endfunction
+
+"call sql formatter on each write/save
+"if has("autocmd")
+    "autocmd BufWritePre *.sql :call SqlFormatter()
+"endif
+
+nnoremap <leader>sf mq :%! npx sql-formatter --uppercase --language postgresql --lines-between-queries 2<CR> `q zz
 "
+"--------------- yapf options ---------------------------------------
+nnoremap <leader>x :0,$!yapf --style google<Cr>
+
 "--------------- `Plugin` options ---------------------------------------

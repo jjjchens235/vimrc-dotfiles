@@ -1,0 +1,9 @@
+
+/Library/
+/Music/
+/.Trash/
+
+
+*.git
+*.pyc
+*.DS_Store

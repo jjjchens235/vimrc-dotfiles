@@ -78,7 +78,7 @@ alias .....='cd ../../../..'
 
 alias cdpy="cd $pro_dir/Python"
 alias cdpr="cd $pro_dir/Python/DEngineering/Udacity/data_modeling_project/"
-alias cdlc="cd $pro_dir/Python/Algorithims_DS/leetcode/yangshun/"
+alias cdlc="cd $pro_dir/Python/Algorithims_DS/leetcode/daily_leetcode_2021/"
 alias cdxe="cd $pro_dir/Python/evernote-sdk-python3/lib/"
 alias cdde="cd $pro_dir/Python/DEngineering"
 
@@ -180,10 +180,10 @@ function cd() {
 	#if user specifies a folder, cd will behave as expected
 	if [ $# -eq 0 ] ; then
 		builtin cd ~
-	elif [ -d $1 ] || [ "$1" == "-" ] ; then
-			builtin cd "$1" && ls | sed 's/ /\\ /g' | xargs ls -d
+	elif [[ -d $@ ]] || [ "$1" == "-" ] ; then
+			builtin cd "$@" && ls | sed 's/ /\\ /g' | head -30 |xargs ls -d
 	else
-			builtin cd "$(dirname $1)" && ls | sed 's/ /\\ /g' | head -10 | xargs ls -d
+			builtin cd "$(dirname $1)" && ls | sed 's/ /\\ /g' | head -30 | xargs ls -d
 	fi
 }
 
@@ -209,6 +209,14 @@ function ff() {
 		rg --files "${PWD}" | rg --regexp "$1[^/]*$"
 	fi 
 }
+
+function fdir() {
+	#returns directories only
+	if type fd &> /dev/null; then
+		fd -H -p  "$@"
+	fi 
+}
+
 
 function fn() {
 	#same as ff, but with --no-ignore
