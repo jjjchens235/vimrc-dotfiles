@@ -4,20 +4,20 @@
 name = Justin Wong
 email = justin.wong235@gmail.com
 [core]  
-  editor = vi 
+	editor = vi 
 	excludesFile = ~/.gitignore
 [alias]
-		#file
-    lf = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat --all -n 12
-		#graph
-    lg = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph --all -n 12
-		#date
-    ld = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative --all -n 12
+	#log files
+	lf = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat --all -n 12
+	#log graph
+	lg = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph --all -n 12
+	#log date
+	ld = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative --all -n 12
 		
 	s = status
-   [color]  
-    diff = auto  
-    status = auto  
-    branch = auto 
-   [branch]  
-    autosetuprebase = always
+	ch = checkout
+	br = branch
+[color]  
+	diff = auto  
+	status = auto  
+	branch = auto 

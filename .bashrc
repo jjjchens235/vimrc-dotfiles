@@ -32,9 +32,9 @@ fi
 
 # set 256 color profile where possible
 if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-    export TERM=gnome-256color
+		export TERM=gnome-256color
 elif infocmp xterm-256color >/dev/null 2>&1; then
-    export TERM=xterm-256color
+		export TERM=xterm-256color
 fi
 
 #LS Colors
@@ -105,6 +105,7 @@ alias man='tldr'
 #######################################################
 #put vim env in bash shell
 set -o vi
+alias vi=vim
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
@@ -265,4 +266,27 @@ if [[ ! -z "$VIM_TERMINAL" ]]; then
 	hookvim
 fi
 
+# ----------git checkout fzf ---------
+#shows list of local branches
+#https://github.com/junegunn/fzf/wiki/examples#git
+gbr() {
+	local branches branch
+	branches=$(git --no-pager branch -vv) &&
+	branch=$(echo "$branches" | fzf +m) &&
+	git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
+
+# returns the list of edited files in current branch compared to master
+# https://confluence.atlassian.com/bitbucketserverkb/understanding-diff-view-in-bitbucket-server-859450562.html
+# https://medium.com/@GroundControl/better-git-diffs-with-fzf-89083739a9cb
+# alias glf='git diff $(git merge-base $(git rev-parse --abbrev-ref HEAD) master) $(git rev-parse --abbrev-ref HEAD) --name-only | cat'
+gdif() {
+	if [ -d .git ]; then
+		current_br="$(git rev-parse --abbrev-ref HEAD)"
+		preview="git diff $(git merge-base $current_br master) $current_br --color=always -- {-1}"
+		git diff $(git merge-base $current_br master) $current_br --name-only | fzf -m --ansi --preview "$preview"
+	else
+		echo "Not a git repository"
+	fi;
+}
 # -------------------------------- 
