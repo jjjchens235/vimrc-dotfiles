@@ -32,9 +32,9 @@ fi
 
 # set 256 color profile where possible
 if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-		export TERM=gnome-256color
+    export TERM=gnome-256color
 elif infocmp xterm-256color >/dev/null 2>&1; then
-		export TERM=xterm-256color
+    export TERM=xterm-256color
 fi
 
 #LS Colors
@@ -143,8 +143,8 @@ if type fd &> /dev/null; then
 	#default command is useful for fzf.vim and piping
 	export FZF_DEFAULT_COMMAND='fd -H -tf'
 	#these 2 are useful for everyday terminal navigation
-	export FZF_CTRL_T_COMMAND="fd -H -a -tf . $pro_dir"
-	export FZF_ALT_C_COMMAND="fd -H -a -td . $pro_dir"
+	export FZF_CTRL_T_COMMAND="fd -H -a -tf ."
+	export FZF_ALT_C_COMMAND="fd -H -a -td ."
 fi
 
 # Don't put duplicate lines in the history and do not add lines that start with a space
