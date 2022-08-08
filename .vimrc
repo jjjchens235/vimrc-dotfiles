@@ -1,13 +1,13 @@
-
 "###############################################################
 " Basic Settings
 "###############################################################
 
 set lines=65
-set columns=80
+"set columns=80
 set autoindent
-"set smartindent
 set number
+set ignorecase
+set smartcase
 set relativenumber
 set nocompatible
 set foldcolumn=1
@@ -18,12 +18,6 @@ set history=500
 syntax on
 syntax enable
 let mapleader = ","
-
-"disable scrollbars
-"set guioptions-=r
-"set guioptions-=R
-"set guioptions-=l
-"set guioptions-=L
 
 set splitbelow splitright
 
@@ -44,13 +38,19 @@ else
 		set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 
+" copy buffer file name, https://stackoverflow.com/a/17096082 
+if has("gui_gtk") || has("gui_gtk2") || has("gui_gnome") || has("unix")
+	" filename (foo.txt)
+	nnoremap <leader>cf :let @+=expand("%:t")<CR>
+	" absolute path (/something/src/foo.txt)
+	nnoremap <leader>cF :let @+=expand("%:p")<CR>
+endif
+
 "colors ------------
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
 let g:solarized_italic=0
-"set t_Co=256
-"t_Co=16 makes terminal vim background lighter
-set t_Co=16
+set t_Co=16 "t_Co=16 makes terminal vim background lighter
 set background=dark
 try
 		colorscheme solarized
@@ -77,11 +77,11 @@ let &t_SI = "\<Esc>[5 q"
 set encoding=utf-8
 set ffs=unix,dos,mac
 autocmd FileType * set tabstop=2|set shiftwidth=2|set noexpandtab
-autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
+autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab|set noignorecase
 autocmd BufRead,BufNewFile *.md set tabstop=4
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType crontab setlocal nowritebackup
-autocmd FileType sql set noai|set tabstop=2
+autocmd FileType sql set noai|set tabstop=2|set expandtab
 
 " No annoying sound on errors
 set belloff=all
@@ -101,6 +101,7 @@ endif
 " General Mappings
 " -------------------------------------------------------------------------
 nnoremap <leader>w :w<CR>:redraw!<CR>
+nnoremap <leader>we :w<CR> :sleep<CR> :e<CR>
  
 " Remap VIM 0 to first non-blank character
 nmap 0 ^
@@ -124,6 +125,8 @@ nnoremap <leader>v <C-v>
 nnoremap <leader>r :redraw!<CR>
 
 " ------------------------- Windows and Terminal --------------------------
+nnoremap <leader>vs :vs<CR>
+
 " Smart way to move between windows
 noremap <C-j> <C-W>j
 noremap <C-k> <C-W>k
@@ -135,9 +138,6 @@ tnoremap <c-k> <c-w>k
 tnoremap <c-l> <c-w>l
 tnoremap <c-h> <c-w>h
 
-" resize terminal window to 15 rows, for both terminal mode, and normal mode
-tmap <C-w>r <C-W>15_
-nmap <C-w>r <C-W>15_
 "resize to max-height - 15
 tnoremap <C-w>m <C-W>j <C-W>15_ <C-W>k 
 nnoremap <C-w>m <C-W>j <C-W>15_ <C-W>k 
@@ -186,7 +186,6 @@ nmap <leader>3 <C-^>
 " :bnext, :bprev normal mode shortcuts
 nnoremap ]b :call BnSkipTermForward()<CR>
 nnoremap [b :call BnSkipTermBack()<CR>
-"nnoremap [b :bprev<CR>
 
 " ------------------------- Tabs -----------------------------------
 nnoremap ]t :tabn<CR>
@@ -212,7 +211,13 @@ nnoremap <expr> <leader>P Has_new_line() ? 'Oq<BS><Esc>]p':'Oq<BS><esc>]pk"_dd'
  
 "print f: surround 'text' with print(f'text: {text}')
 nnoremap <leader>f Iprint(f'\n<esc>l"py$A:<space><esc>"pp<esc>Bi{<esc>A}')<esc>^
-
+"
+"Create a group by statement when cursor is on table name
+nnoremap <leader>gb ISELECT field1, COUNT(*) ct FROM <ESC> oGROUP BY 1<ESC>oHAVING ct > 1;<ESC>2k0 
+"
+"add markdown link
+nnoremap <C-k> viwb<esc>i[<esc>Ea](<esc>"+pa)<esc>
+vnoremap <C-k> mlomh<ESC>0`hi[<ESC>`lla]()<ESC>"+P`h
 
 
 " ------------------------- Code Navigation -------------------------------
@@ -248,8 +253,8 @@ set mouse=a
 
 " ------------------------- Editing Text ----------------------------------
 "new line in normal mode
-nnoremap <Enter> oq<BS><Esc>kl
-nnoremap <leader><Enter> Oq<BS><Esc>jl
+nnoremap <Enter> oq<BS><Esc>Dkl
+nnoremap <leader><Enter> Oq<BS><Esc>Djl
 
 "create a space using spacebar in normal mode
 nnoremap <space> a<space><Esc>
@@ -275,6 +280,9 @@ endif
 "edit scratchpad
 nnoremap <leader>eb :e ~/.bashrc<CR>
 nnoremap <leader>es :e ~/Programming/Playground/buffer<CR>
+nnoremap <leader>eq :e ~/Programming/SQL/scratch.sql<CR>
+nnoremap <leader>ep :e ~/Programming/Python/scratch.py<CR>
+nnoremap <leader>em :e ~/Programming/Markdown/scratch.md<CR>
 
 "--------------- Command mode mappings ------------------
 "bash like keys for : command line mode
@@ -298,7 +306,7 @@ endif
 cnoremap <A-b> <S-Left>
 cnoremap <A-f> <S-Right>
 
-" ------------------------- Visual Mode -----------------------------------
+" ------------------------- Visual Mode --------------------
 
 "replace words with ctr+r in visual mode
 vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
@@ -306,10 +314,14 @@ vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
-" ------------------------- Misc -----------------------------------
+" ------------------------- Search/Replace -----------------
+" remove ctrl+m character
+nnoremap <leader>rm :%s/<C-V><C-M>//g<CR>
+
+" ------------------------- Misc ----------------------------
 "call clean white space func
 if has("autocmd")
-		autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+	autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee,*.sql :call CleanExtraSpaces()
 endif
 
 " Return to last edit position when opening files (You want this!)
@@ -446,7 +458,6 @@ function! BnSkipTermBack()
 	endwhile
 endfunction
 
-
 "-------------------- abbrev --------------------------
 
 "create a vertical split from existing buffer
@@ -483,6 +494,9 @@ Plug 'vim-python/python-syntax'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'whiteinge/diffconflicts'
+Plug 'altercation/vim-colors-solarized'
 " Initialize plugin system
 call plug#end()
 
@@ -530,7 +544,7 @@ nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 "--------------- python syntax settings
 let g:python_highlight_all = 1
 
-"--------------- FZF.vim options ------------------------------------------
+"--------------- FZF.vim options -----------------------------
 
 "Goes back to the old layout before this: https://github.com/junegunn/fzf/commit/c60ed1758315f0d993fbcbf04459944c87e19a48
 let g:fzf_layout = { 'down': '40%' }
@@ -580,24 +594,38 @@ let g:syntastic_python_flake8_args='--ignore=E501,E225,E124,E93,E265,E261,E122,E
 "move to next error using lnext
 nnoremap <silent> <leader>e :call WrapCommand('next', 'l')<CR>
 
+"--------------- yapf options --------------------------------
+nnoremap <leader>y mq :0,$!yapf --style='{based_on_style: facebook}'<CR> `q zz
+
 "--------------- sql formatter - NPM library ------------------------------
-" vim-plug not necessary for this, using externally downloaded lib
-"dependency: npm install sql-formatter
-"src: https://stackoverflow.com/a/60242117/8722091
-" Also tried, didnt like format:https://stackoverflow.com/a/8577782/8722091
-map <leader>sf :%! npx sql-formatter --lines-between-queries 2<CR>
-function! SqlFormatter()
-		%! npx sql-formatter --lines-between-queries 2
-endfunction
+"nnoremap <leader>sf mq :%! npx sql-formatter --uppercase --language postgresql --lines-between-queries 2<CR> `q zz
+nnoremap <leader>sf mq :%! npx sql-formatter --config "/Users/justinwong/.config/sql-formatter/config.json"<CR>
 
-"call sql formatter on each write/save
-"if has("autocmd")
-		"autocmd BufWritePre *.sql :call SqlFormatter()
-"endif
+" search and replace
+" https://www.evernote.com/l/ApB7RAojmVlDPb0NC35Cag-Ha4OtAJQA47s
+nnoremap <leader>sr :%s/set\n /SET/ge <BAR> %s/create\nor/CREATE OR/ge <BAR> %s/@ /@/ge <BAR> %s/\$ /$/ge <BAR> %s,\(\w\)\s\/\s,\1/,ge <BAR> %s,\(\w\)\s\/$,\1/,ge <BAR> %s/select\n\(.*\)distinct/SELECT DISTINCT\r\1/ge <BAR> %s/select\n\s*\(\w*\)\(\n.*from\)/SELECT \1\2/ge <BAR> %s/merge/MERGE/ge <BAR> %s/matched/MATCHED/ge <BAR> %s/= >/=>/ge <BAR> %s/\s\+\(:\+\)\s*/\1/ge<CR><CR> `q
 
-nnoremap <leader>sf mq :%! npx sql-formatter --uppercase --language postgresql --lines-between-queries 2<CR> `q zz
-"
-"--------------- yapf options ---------------------------------------
-nnoremap <leader>y :0,$!yapf --style='{based_on_style: facebook}'<Cr>
+nnoremap <leader>so :call CocAction('diagnosticToggle')<CR>
 
-"--------------- `Plugin` options ---------------------------------------
+
+"--------------- Coc options ---------------------------------------
+"set linter popup color
+highlight CocFloating ctermbg=2
+highlight CocFloating ctermfg=black
+"update/fix formatting, sql fix part b
+nnoremap <leader>sb :CocCommand sqlfluff.fix --rules L011,L012<CR>
+" show error list, sql error
+nnoremap <leader>se :CocList diagnostics<CR>
+
+"--------------- JQ Json options -----------------------------
+nnoremap <leader>jq :%!jq .<CR>
+
+"--------------- DiffConflicts options -----------------------
+" {'gc': 'git conflict', 'gt': git 'theirs', 'gf': 'finalize the diff'}
+nnoremap <leader>gc <C-W>o:DiffConflicts<CR>
+nnoremap <leader>gt :diffget<CR>
+"nnoremap <leader>gf mG:w<CR><C-L>:q<CR>`G
+nnoremap <leader>gf :w<CR><C-W>o
+
+"--------------- `Plugin` options ----------------------------
+

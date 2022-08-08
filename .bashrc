@@ -32,9 +32,9 @@ fi
 
 # set 256 color profile where possible
 if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-    export TERM=gnome-256color
+		export TERM=gnome-256color
 elif infocmp xterm-256color >/dev/null 2>&1; then
-    export TERM=xterm-256color
+		export TERM=xterm-256color
 fi
 
 #LS Colors
@@ -46,7 +46,13 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 #######################################################
 
 #need to use gnu expr rather than default osx bsd expr
-alias expr="/usr/local/opt/coreutils/libexec/gnubin/expr"
+if [ -f /usr/local/opt/coreutils/libexec/gnubin/expr ]; then
+	alias expr="/usr/local/opt/coreutils/libexec/gnubin/expr"
+	iatest=$(expr index "$-" i)
+	# Disable the bell
+	if [[ $iatest > 0 ]]; then bind "set bell-style visible"; fi
+	if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
+fi
 
 if type rg &> /dev/null; then
 	alias grep='rg'
@@ -54,19 +60,26 @@ else
 	alias grep="/usr/local/opt/grep/libexec/gnubin/grep"
 fi
 
+if type gxargs &> /dev/null; then
+	alias xargs='gxargs'
+fi
+
 alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 
 pro_dir=$HOME/'Programming/'
 # Edit this .bashrc file
-alias ebrc='vi ~/.bashrc'
-alias sbrc='source ~/.bashrc'
-alias evrc='vi ~/.vimrc'
-alias epg="vi $pro_dir/Playground/hello.py"
+alias ,es='vi ~/.bashrc'
+alias ,sb='source ~/.bashrc'
+alias ,ev='vi ~/.vimrc'
+
+alias ,es='vi ~/Programming/Playground/buffer'
+alias ,eq='vi ~/Programming/SQL/scratch.sql'
+alias ,ep='vi ~/Programming/Python/scratch.py'
+alias ,em='vi ~/Programming/Markdown/scratch.md'
 
 # alias to show the date
 alias da='date "+%Y-%m-%d %A %T %Z"'
-
 
 # Change directory aliases
 alias home='cd ~'
@@ -76,10 +89,14 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+alias cdsql="cd $pro_dir/SQL/"
+
 alias cdpy="cd $pro_dir/Python"
 alias cdpr="cd $pro_dir/Python/DEngineering/Udacity/data_modeling_project/"
-alias cdlc="cd $pro_dir/Python/Algorithims_DS/leetcode/daily_leetcode_2021/"
+alias cdlc="cd $pro_dir/Python/Algorithims_DS/leetcode/2022_daily_leetcode_gitlab/"
+
 alias cdxe="cd $pro_dir/Python/evernote-sdk-python3/lib/"
+alias cdbr="cd $pro_dir/Python/bing-rewards-master/BingRewards/"
 alias cdde="cd $pro_dir/Python/DEngineering"
 
 alias cdpg="cd $pro_dir/Playground/"
@@ -105,7 +122,7 @@ alias man='tldr'
 #######################################################
 #put vim env in bash shell
 set -o vi
-alias vi=vim
+#alias vi=vim
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
@@ -126,13 +143,18 @@ unset MAILCHECK
 #######################################################
 # EXPORTS
 #######################################################
-iatest=$(expr index "$-" i)
-# Disable the bell
-if [[ $iatest > 0 ]]; then bind "set bell-style visible"; fi
-
 # Expand the history size
 export HISTFILESIZE=5000
 export HISTSIZE=500
+
+# Don't put duplicate lines in the history and do not add lines that start with a space
+export HISTCONTROL=erasedups:ignoredups:ignorespace
+# Causes bash to append to history instead of overwriting it so if you start a new terminal, you have old session history
+shopt -s histappend
+PROMPT_COMMAND='history -a'
+
+# Allow ctrl-S for history navigation (with ctrl-R)
+stty -ixon
 
 # ripgrep
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
@@ -143,26 +165,10 @@ if type fd &> /dev/null; then
 	#default command is useful for fzf.vim and piping
 	export FZF_DEFAULT_COMMAND='fd -H -tf'
 	#these 2 are useful for everyday terminal navigation
-	export FZF_CTRL_T_COMMAND="fd -H -a -tf ."
+	export FZF_CTRL_T_COMMAND="fd -H -tf ."
 	export FZF_ALT_C_COMMAND="fd -H -a -td ."
 fi
 
-# Don't put duplicate lines in the history and do not add lines that start with a space
-export HISTCONTROL=erasedups:ignoredups:ignorespace
-
-# Causes bash to append to history instead of overwriting it so if you start a new terminal, you have old session history
-shopt -s histappend
-PROMPT_COMMAND='history -a'
-
-# Allow ctrl-S for history navigation (with ctrl-R)
-stty -ixon
-
-# Ignore case on auto-completion
-# Note: bind used instead of sticking these in .inputrc
-if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
-
-# Show auto-completion list automatically, without double tab
-#if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 
 # Color for manpages in less makes manpages a little easier to read
 export LESS_TERMCAP_mb=$'\E[01;31m'
@@ -186,6 +192,11 @@ function cd() {
 	else
 			builtin cd "$(dirname $1)" && ls | sed 's/ /\\ /g' | head -30 | xargs ls -d
 	fi
+}
+
+#cd to git root dir
+function cdr() {
+	cd "$(git rev-parse --show-toplevel)"
 }
 
 function f() {
@@ -246,7 +257,13 @@ function vi() {
 	fi
 }
 
+#Function pbcopy
+function pb() {
+	cat $1 | pbcopy
+}
+
 # -------- cd vim terminal change dir ---- 
+#source:https://vi.stackexchange.com/questions/21798/how-to-change-local-directory-of-terminal-buffer-whenever-its-shell-change-direc
 cdv()
 {
 	printf '\033]51;["call", "Tapi_lcd", ["%s"]]\007' "$(pwd)"
@@ -269,18 +286,22 @@ fi
 # ----------git checkout fzf ---------
 #shows list of local branches
 #https://github.com/junegunn/fzf/wiki/examples#git
-gbr() {
+gch() {
 	local branches branch
-	branches=$(git --no-pager branch -vv) &&
+	branches=$(git --no-pager branch) &&
 	branch=$(echo "$branches" | fzf +m) &&
 	git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
+gbr() {
+	#example of how to use this: `git merge $(gbr)`
+	git --no-pager branch | fzf
 }
 
 # returns the list of edited files in current branch compared to master
 # https://confluence.atlassian.com/bitbucketserverkb/understanding-diff-view-in-bitbucket-server-859450562.html
 # https://medium.com/@GroundControl/better-git-diffs-with-fzf-89083739a9cb
 # alias glf='git diff $(git merge-base $(git rev-parse --abbrev-ref HEAD) master) $(git rev-parse --abbrev-ref HEAD) --name-only | cat'
-gdif() {
+gd() {
 	if [ -d .git ]; then
 		current_br="$(git rev-parse --abbrev-ref HEAD)"
 		preview="git diff $(git merge-base $current_br master) $current_br --color=always -- {-1}"
@@ -289,4 +310,14 @@ gdif() {
 		echo "Not a git repository"
 	fi;
 }
-# -------------------------------- 
+alias vgd='vi $(gd)'
+
+#git diff all
+gda() {
+		current_br="$(git rev-parse --abbrev-ref HEAD)"
+		git diff $(git merge-base $current_br master) $current_br --name-only 
+}
+alias vgda='vi $(gda)'
+
+# open all files with merge conflict
+alias vgc='vi $(git diff --name-only --diff-filter=U)'
