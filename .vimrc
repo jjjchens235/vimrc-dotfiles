@@ -216,9 +216,7 @@ nnoremap <leader>f Iprint(f'\n<esc>l"py$A:<space><esc>"pp<esc>Bi{<esc>A}')<esc>^
 nnoremap <leader>gb ISELECT field1, COUNT(*) ct FROM <ESC> oGROUP BY 1<ESC>oHAVING ct > 1;<ESC>2k0 
 "
 "add markdown link
-nnoremap <C-k> viwb<esc>i[<esc>Ea](<esc>"+pa)<esc>
-vnoremap <C-k> mlomh<ESC>0`hi[<ESC>`lla]()<ESC>"+P`h
-
+vnoremap <c-k> s[]<esc>Pla()<esc>"+P
 
 " ------------------------- Code Navigation -------------------------------
 "move to method top
