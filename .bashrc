@@ -69,7 +69,7 @@ alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall F
 
 pro_dir=$HOME/'Programming/'
 # Edit this .bashrc file
-alias ,es='vi ~/.bashrc'
+alias ,eb='vi ~/.bashrc'
 alias ,sb='source ~/.bashrc'
 alias ,ev='vi ~/.vimrc'
 
