@@ -1,3 +1,4 @@
+
 "###############################################################
 " Basic Settings
 "###############################################################
@@ -33,9 +34,9 @@ set wildmenu
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 if has("win32unix") || has("win32")
-		set wildignore+=.git\*,.hg\*,.svn\*
+    set wildignore+=.git\*,.hg\*,.svn\*
 else
-		set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 
 " copy buffer file name, https://stackoverflow.com/a/17096082 
@@ -59,7 +60,7 @@ catch /^Vim\%((\a\+)\)\=:E185/
 endtry
 "fixes vim terminal background scrolling issue
 if !has("gui_running")
-		set term=screen-256color
+    set term=screen-256color
 endif
 "line number coloring
 highlight LineNr ctermfg=248 ctermbg=23 guifg=#586e75 guibg=#073642
@@ -90,7 +91,7 @@ set novisualbell
 set t_vb=
 set tm=500
 if has("gui_macvim")
-		autocmd GUIEnter * set vb t_vb=
+    autocmd GUIEnter * set vb t_vb=
 endif
 
 "###############################################################
@@ -269,11 +270,11 @@ nnoremap <leader>sc z=
 
 " ------------------------- Editing Files ---------------------------------
 if has("win32unix") || has("win32")
-		nnoremap <leader>ev :e ~/_vimrc<CR>
-		nnoremap <leader>sv :source ~/_vimrc<CR>
+    nnoremap <leader>ev :e ~/_vimrc<CR>
+    nnoremap <leader>sv :source ~/_vimrc<CR>
 else
-		nnoremap <leader>ev :e ~/.vimrc<CR>
-		nnoremap <leader>sv :source ~/.vimrc<CR>
+    nnoremap <leader>ev :e ~/.vimrc<CR>
+    nnoremap <leader>sv :source ~/.vimrc<CR>
 endif
 "edit scratchpad
 nnoremap <leader>eb :e ~/.bashrc<CR>
@@ -330,29 +331,29 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 "---------------------helper functions
 function! VisualSelection(direction, extra_filter) range
-		let l:saved_reg = @"
-		execute "normal! vgvy"
+    let l:saved_reg = @"
+    execute "normal! vgvy"
 
-		let l:pattern = escape(@", "\\/.*'$^~[]")
-		let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-		if a:direction == 'gv'
-				call CmdLine("Ack '" . l:pattern . "' " )
-		elseif a:direction == 'replace'
-				call CmdLine("%s" . '/'. l:pattern . '/')
-		endif
+    if a:direction == 'gv'
+        call CmdLine("Ack '" . l:pattern . "' " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
 
-		let @/ = l:pattern
-		let @" = l:saved_reg
+    let @/ = l:pattern
+    let @" = l:saved_reg
 endfunction
 
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
-		let save_cursor = getpos(".")
-		let old_query = getreg('/')
-		silent! %s/\s\+$//e
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
 		call setpos('.', save_cursor)
-		call setreg('/', old_query)
+    call setreg('/', old_query)
 endfun
 
 "if the register contains \n (user used yy), then do ]p simply.
@@ -489,7 +490,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'ycm-core/YouCompleteMe', { 'do': './install.py' }
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'vim-python/python-syntax'
-Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -500,12 +501,12 @@ call plug#end()
 
 "-------------- airline settings
 if has('gui_running')
-		let g:airline_powerline_fonts = 1
+    let g:airline_powerline_fonts = 1
 else
-	let g:airline_left_sep = '⮀'
-	let g:airline_left_alt_sep = '⮁'
-	let g:airline_right_sep = '⮂'
-	let g:airline_right_alt_sep = '⮃'
+  let g:airline_left_sep = '⮀'
+  let g:airline_left_alt_sep = '⮁'
+  let g:airline_right_sep = '⮂'
+  let g:airline_right_alt_sep = '⮃'
 endif
 
 set guifont=Hack\ Regular:h11
@@ -522,9 +523,9 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:ycm_python_interpreter_path = ''
 let g:ycm_python_sys_path = []
 let g:ycm_extra_conf_vim_data = [
-	\  'g:ycm_python_interpreter_path',
-	\  'g:ycm_python_sys_path'
-	\]
+  \  'g:ycm_python_interpreter_path',
+  \  'g:ycm_python_sys_path'
+  \]
 let g:ycm_global_ycm_extra_conf = '~/ycm_global_extra_conf.py'
 let g:ycm_always_populate_location_list = 1
 let g:ycm_server_keep_logfiles = 1
